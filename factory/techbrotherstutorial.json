@@ -1,0 +1,9 @@
+{
+	"name": "techbrotherstutorial",
+	"location": "eastus",
+	"identity": {
+		"type": "SystemAssigned",
+		"principalId": "47d31e08-cff7-4997-b20c-0b7a94fa181b",
+		"tenantId": "42dcbf55-5f98-4e02-82ab-90def1ffc2f3"
+	}
+}
