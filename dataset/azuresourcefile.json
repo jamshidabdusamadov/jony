@@ -1,12 +1,15 @@
 {
-	"name": "linktosourcefiles",
+	"name": "azuresourcefile",
 	"properties": {
+		"linkedServiceName": {
+			"referenceName": "azurebloblink",
+			"type": "LinkedServiceReference"
+		},
 		"annotations": [],
 		"type": "DelimitedText",
 		"typeProperties": {
 			"location": {
 				"type": "AzureBlobStorageLocation",
-				"fileName": "employeeable.txt",
 				"container": "source"
 			},
 			"columnDelimiter": ",",
