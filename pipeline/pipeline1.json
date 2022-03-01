@@ -20,7 +20,7 @@
 						"storeSettings": {
 							"type": "AzureBlobStorageReadSettings",
 							"recursive": true,
-							"wildcardFileName": "*.txt",
+							"wildcardFileName": "emp*.txt",
 							"enablePartitionDiscovery": false
 						},
 						"formatSettings": {
@@ -76,9 +76,16 @@
 				"userProperties": [],
 				"typeProperties": {
 					"source": {
-						"type": "AzureSqlSource",
-						"queryTimeout": "02:00:00",
-						"partitionOption": "None"
+						"type": "DelimitedTextSource",
+						"storeSettings": {
+							"type": "AzureBlobStorageReadSettings",
+							"recursive": true,
+							"wildcardFileName": "emp*.txt",
+							"enablePartitionDiscovery": false
+						},
+						"formatSettings": {
+							"type": "DelimitedTextReadSettings"
+						}
 					},
 					"sink": {
 						"type": "DelimitedTextSink",
@@ -103,7 +110,7 @@
 				},
 				"inputs": [
 					{
-						"referenceName": "azuresqlemployeetable",
+						"referenceName": "azuresourcefile",
 						"type": "DatasetReference"
 					}
 				],
