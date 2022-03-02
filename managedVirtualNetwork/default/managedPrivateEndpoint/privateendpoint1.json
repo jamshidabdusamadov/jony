@@ -1,0 +1,9 @@
+{
+	"name": "privateendpoint1",
+	"properties": {
+		"privateLinkResourceId": "/subscriptions/559b708b-e9de-4c26-b683-9e268fd75c9c/resourceGroups/DEMO/providers/Microsoft.Sql/servers/javoxir",
+		"groupId": "sqlServer",
+		"ipAddress": null,
+		"resourceId": "/subscriptions/0ca33b6d-85cb-49d6-90d4-e28a47d9eabd/resourceGroups/vnet-0ca33b6d-eastus-67-rg/providers/Microsoft.Network/privateEndpoints/techbrotherstutorial.privateendpoint1"
+	}
+}
