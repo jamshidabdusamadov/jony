@@ -5,8 +5,29 @@
 		"factoryName": {
 			"value": "techbrotherstutorial"
 		},
+		"azurebloblink_connectionString": {
+			"value": ""
+		},
+		"azuresqllink_connectionString": {
+			"value": ""
+		},
 		"linktoblobstorage_connectionString": {
 			"value": ""
+		},
+		"privateendpointenabled_connectionString": {
+			"value": ""
+		},
+		"privateendpoint1_properties_privateLinkResourceId": {
+			"value": "/subscriptions/559b708b-e9de-4c26-b683-9e268fd75c9c/resourceGroups/DEMO/providers/Microsoft.Sql/servers/javoxir"
+		},
+		"privateendpoint1_properties_groupId": {
+			"value": "sqlServer"
+		},
+		"privateendpoint1_properties_ipAddress": {
+			"value": null
+		},
+		"privateendpoint1_properties_resourceId": {
+			"value": "/subscriptions/0ca33b6d-85cb-49d6-90d4-e28a47d9eabd/resourceGroups/vnet-0ca33b6d-eastus-67-rg/providers/Microsoft.Network/privateEndpoints/techbrotherstutorial.privateendpoint1"
 		},
 		"containerUri": {
 			"value": ""

@@ -7,9 +7,37 @@
 			"metadata": "Data Factory name",
 			"defaultValue": "techbrotherstutorial"
 		},
+		"azurebloblink_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'azurebloblink'"
+		},
+		"azuresqllink_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'azuresqllink'"
+		},
 		"linktoblobstorage_connectionString": {
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'linktoblobstorage'"
+		},
+		"privateendpointenabled_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'privateendpointenabled'"
+		},
+		"privateendpoint1_properties_privateLinkResourceId": {
+			"type": "string",
+			"defaultValue": "/subscriptions/559b708b-e9de-4c26-b683-9e268fd75c9c/resourceGroups/DEMO/providers/Microsoft.Sql/servers/javoxir"
+		},
+		"privateendpoint1_properties_groupId": {
+			"type": "string",
+			"defaultValue": "sqlServer"
+		},
+		"privateendpoint1_properties_ipAddress": {
+			"type": "object",
+			"defaultValue": null
+		},
+		"privateendpoint1_properties_resourceId": {
+			"type": "string",
+			"defaultValue": "/subscriptions/0ca33b6d-85cb-49d6-90d4-e28a47d9eabd/resourceGroups/vnet-0ca33b6d-eastus-67-rg/providers/Microsoft.Network/privateEndpoints/techbrotherstutorial.privateendpoint1"
 		},
 		"containerUri": {
 			"type": "string",
@@ -38,8 +66,29 @@
 					"factoryName": {
 						"value": "[parameters('factoryName')]"
 					},
+					"azurebloblink_connectionString": {
+						"value": "[parameters('azurebloblink_connectionString')]"
+					},
+					"azuresqllink_connectionString": {
+						"value": "[parameters('azuresqllink_connectionString')]"
+					},
 					"linktoblobstorage_connectionString": {
 						"value": "[parameters('linktoblobstorage_connectionString')]"
+					},
+					"privateendpointenabled_connectionString": {
+						"value": "[parameters('privateendpointenabled_connectionString')]"
+					},
+					"privateendpoint1_properties_privateLinkResourceId": {
+						"value": "[parameters('privateendpoint1_properties_privateLinkResourceId')]"
+					},
+					"privateendpoint1_properties_groupId": {
+						"value": "[parameters('privateendpoint1_properties_groupId')]"
+					},
+					"privateendpoint1_properties_ipAddress": {
+						"value": "[parameters('privateendpoint1_properties_ipAddress')]"
+					},
+					"privateendpoint1_properties_resourceId": {
+						"value": "[parameters('privateendpoint1_properties_resourceId')]"
 					}
 				}
 			},

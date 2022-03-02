@@ -7,15 +7,69 @@
 			"metadata": "Data Factory name",
 			"defaultValue": "techbrotherstutorial"
 		},
+		"azurebloblink_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'azurebloblink'"
+		},
+		"azuresqllink_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'azuresqllink'"
+		},
 		"linktoblobstorage_connectionString": {
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'linktoblobstorage'"
+		},
+		"privateendpointenabled_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'privateendpointenabled'"
+		},
+		"privateendpoint1_properties_privateLinkResourceId": {
+			"type": "string",
+			"defaultValue": "/subscriptions/559b708b-e9de-4c26-b683-9e268fd75c9c/resourceGroups/DEMO/providers/Microsoft.Sql/servers/javoxir"
+		},
+		"privateendpoint1_properties_groupId": {
+			"type": "string",
+			"defaultValue": "sqlServer"
+		},
+		"privateendpoint1_properties_ipAddress": {
+			"type": "object",
+			"defaultValue": null
+		},
+		"privateendpoint1_properties_resourceId": {
+			"type": "string",
+			"defaultValue": "/subscriptions/0ca33b6d-85cb-49d6-90d4-e28a47d9eabd/resourceGroups/vnet-0ca33b6d-eastus-67-rg/providers/Microsoft.Network/privateEndpoints/techbrotherstutorial.privateendpoint1"
 		}
 	},
 	"variables": {
 		"factoryId": "[concat('Microsoft.DataFactory/factories/', parameters('factoryName'))]"
 	},
 	"resources": [
+		{
+			"name": "[concat(parameters('factoryName'), '/azurebloblink')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "AzureBlobStorage",
+				"typeProperties": {
+					"connectionString": "[parameters('azurebloblink_connectionString')]"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/azuresqllink')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "AzureSqlDatabase",
+				"typeProperties": {
+					"connectionString": "[parameters('azuresqllink_connectionString')]"
+				}
+			},
+			"dependsOn": []
+		},
 		{
 			"name": "[concat(parameters('factoryName'), '/linktoblobstorage')]",
 			"type": "Microsoft.DataFactory/factories/linkedServices",
@@ -30,12 +84,45 @@
 			"dependsOn": []
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/linktosourcefolder')]",
+			"name": "[concat(parameters('factoryName'), '/default')]",
+			"type": "Microsoft.DataFactory/factories/managedVirtualNetworks",
+			"apiVersion": "2018-06-01",
+			"properties": {},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/azurearchivelink')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
 			"properties": {
 				"linkedServiceName": {
-					"referenceName": "linktoblobstorage",
+					"referenceName": "azurebloblink",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobStorageLocation",
+						"container": "destination"
+					},
+					"columnDelimiter": ",",
+					"escapeChar": "\\",
+					"quoteChar": "\""
+				},
+				"schema": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/azurebloblink')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/azuresourcefile')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "azurebloblink",
 					"type": "LinkedServiceReference"
 				},
 				"annotations": [],
@@ -53,16 +140,37 @@
 				"schema": []
 			},
 			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/linktoblobstorage')]"
+				"[concat(variables('factoryId'), '/linkedServices/azurebloblink')]"
 			]
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/linktoarchivefolder')]",
+			"name": "[concat(parameters('factoryName'), '/azuresqlemployeetable')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
 			"properties": {
 				"linkedServiceName": {
-					"referenceName": "linktoblobstorage",
+					"referenceName": "azuresqllink",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [],
+				"typeProperties": {
+					"schema": "dbo",
+					"table": "employee"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/azuresqllink')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/linktosourcefiles')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "azurebloblink",
 					"type": "LinkedServiceReference"
 				},
 				"annotations": [],
@@ -70,16 +178,58 @@
 				"typeProperties": {
 					"location": {
 						"type": "AzureBlobStorageLocation",
-						"container": "archive"
+						"fileName": "employeeable.txt",
+						"container": "source"
 					},
 					"columnDelimiter": ",",
 					"escapeChar": "\\",
+					"firstRowAsHeader": true,
 					"quoteChar": "\""
 				},
 				"schema": []
 			},
 			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/linktoblobstorage')]"
+				"[concat(variables('factoryId'), '/linkedServices/azurebloblink')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/azuresqlendpointenabled')]",
+			"type": "Microsoft.DataFactory/factories/integrationRuntimes",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"type": "Managed",
+				"typeProperties": {
+					"computeProperties": {
+						"location": "East US",
+						"dataFlowProperties": {
+							"computeType": "General",
+							"coreCount": 8,
+							"timeToLive": 10,
+							"cleanup": false
+						}
+					}
+				},
+				"managedVirtualNetwork": {
+					"type": "ManagedVirtualNetworkReference",
+					"referenceName": "default"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/managedVirtualNetworks/default')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/default/privateendpoint1')]",
+			"type": "Microsoft.DataFactory/factories/managedVirtualNetworks/managedPrivateEndpoints",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"privateLinkResourceId": "[parameters('privateendpoint1_properties_privateLinkResourceId')]",
+				"groupId": "[parameters('privateendpoint1_properties_groupId')]",
+				"ipAddress": "[parameters('privateendpoint1_properties_ipAddress')]",
+				"resourceId": "[parameters('privateendpoint1_properties_resourceId')]"
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/managedVirtualNetworks/default')]"
 			]
 		},
 		{
@@ -89,7 +239,7 @@
 			"properties": {
 				"activities": [
 					{
-						"name": "pullfromsourcetoarchive",
+						"name": "copy from source to azure sql",
 						"type": "Copy",
 						"dependsOn": [],
 						"policy": {
@@ -106,7 +256,69 @@
 								"storeSettings": {
 									"type": "AzureBlobStorageReadSettings",
 									"recursive": true,
-									"wildcardFileName": "*.txt",
+									"wildcardFileName": "emp*.txt",
+									"enablePartitionDiscovery": false
+								},
+								"formatSettings": {
+									"type": "DelimitedTextReadSettings"
+								}
+							},
+							"sink": {
+								"type": "AzureSqlSink",
+								"writeBehavior": "insert",
+								"sqlWriterUseTableLock": false
+							},
+							"enableStaging": false,
+							"translator": {
+								"type": "TabularTranslator",
+								"typeConversion": true,
+								"typeConversionSettings": {
+									"allowDataTruncation": true,
+									"treatBooleanAsNumber": false
+								}
+							}
+						},
+						"inputs": [
+							{
+								"referenceName": "azuresourcefile",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "azuresqlemployeetable",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						]
+					},
+					{
+						"name": "copy from sql to archive folder",
+						"type": "Copy",
+						"dependsOn": [
+							{
+								"activity": "copy from source to azure sql",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "DelimitedTextSource",
+								"storeSettings": {
+									"type": "AzureBlobStorageReadSettings",
+									"recursive": true,
+									"wildcardFileName": "emp*.txt",
 									"enablePartitionDiscovery": false
 								},
 								"formatSettings": {
@@ -136,25 +348,25 @@
 						},
 						"inputs": [
 							{
-								"referenceName": "linktosourcefolder",
+								"referenceName": "azuresourcefile",
 								"type": "DatasetReference",
 								"parameters": {}
 							}
 						],
 						"outputs": [
 							{
-								"referenceName": "linktoarchivefolder",
+								"referenceName": "azurearchivelink",
 								"type": "DatasetReference",
 								"parameters": {}
 							}
 						]
 					},
 					{
-						"name": "deletefromsourcefolder",
+						"name": "Delete1",
 						"type": "Delete",
 						"dependsOn": [
 							{
-								"activity": "pullfromsourcetoarchive",
+								"activity": "copy from sql to archive folder",
 								"dependencyConditions": [
 									"Succeeded"
 								]
@@ -170,21 +382,15 @@
 						"userProperties": [],
 						"typeProperties": {
 							"dataset": {
-								"referenceName": "linktosourcefolder",
+								"referenceName": "azuresourcefile",
 								"type": "DatasetReference",
 								"parameters": {}
 							},
-							"logStorageSettings": {
-								"linkedServiceName": {
-									"referenceName": "linktoblobstorage",
-									"type": "LinkedServiceReference"
-								}
-							},
-							"enableLogging": true,
+							"enableLogging": false,
 							"storeSettings": {
 								"type": "AzureBlobStorageReadSettings",
 								"recursive": true,
-								"wildcardFileName": "*.txt",
+								"wildcardFileName": "emp*.txt",
 								"enablePartitionDiscovery": false
 							}
 						}
@@ -197,9 +403,121 @@
 				"annotations": []
 			},
 			"dependsOn": [
-				"[concat(variables('factoryId'), '/datasets/linktosourcefolder')]",
-				"[concat(variables('factoryId'), '/datasets/linktoarchivefolder')]",
-				"[concat(variables('factoryId'), '/linkedServices/linktoblobstorage')]"
+				"[concat(variables('factoryId'), '/datasets/azuresourcefile')]",
+				"[concat(variables('factoryId'), '/datasets/azuresqlemployeetable')]",
+				"[concat(variables('factoryId'), '/datasets/azurearchivelink')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/privateendpointenabled')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "AzureSqlDatabase",
+				"typeProperties": {
+					"connectionString": "[parameters('privateendpointenabled_connectionString')]"
+				},
+				"connectVia": {
+					"referenceName": "azuresqlendpointenabled",
+					"type": "IntegrationRuntimeReference"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/integrationRuntimes/azuresqlendpointenabled')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/linkwithendpoint')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "privateendpointenabled",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [],
+				"typeProperties": {
+					"schema": "dbo",
+					"table": "employee"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/privateendpointenabled')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/pipeline2')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "Copy data1",
+						"type": "Copy",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "AzureSqlSource",
+								"queryTimeout": "02:00:00",
+								"partitionOption": "None"
+							},
+							"sink": {
+								"type": "DelimitedTextSink",
+								"storeSettings": {
+									"type": "AzureBlobStorageWriteSettings"
+								},
+								"formatSettings": {
+									"type": "DelimitedTextWriteSettings",
+									"quoteAllText": true,
+									"fileExtension": ".txt"
+								}
+							},
+							"enableStaging": false,
+							"translator": {
+								"type": "TabularTranslator",
+								"typeConversion": true,
+								"typeConversionSettings": {
+									"allowDataTruncation": true,
+									"treatBooleanAsNumber": false
+								}
+							}
+						},
+						"inputs": [
+							{
+								"referenceName": "linkwithendpoint",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "linktosourcefiles",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						]
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {},
+					"cancelAfter": {}
+				},
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/linkwithendpoint')]",
+				"[concat(variables('factoryId'), '/datasets/linktosourcefiles')]"
 			]
 		}
 	]
