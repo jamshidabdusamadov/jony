@@ -1,0 +1,21 @@
+{
+	"name": "connectiontofolderwithmultiplefiles",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "linktoazureblobstoragewithmultiplefiles",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "DelimitedText",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobStorageLocation",
+				"container": "differentnamedfiles"
+			},
+			"columnDelimiter": ",",
+			"escapeChar": "\\",
+			"quoteChar": "\""
+		},
+		"schema": []
+	}
+}
