@@ -7,6 +7,14 @@
 			"metadata": "Data Factory name",
 			"defaultValue": "techbrotherstutorial"
 		},
+		"AzureBlobStorage1_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'AzureBlobStorage1'"
+		},
+		"AzureBlobStorage2_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'AzureBlobStorage2'"
+		},
 		"azurebloblink_connectionString": {
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'azurebloblink'"
@@ -22,6 +30,10 @@
 		"privateendpointenabled_connectionString": {
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'privateendpointenabled'"
+		},
+		"linktoazureblobstoragewithmultiplefiles_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'linktoazureblobstoragewithmultiplefiles'"
 		},
 		"privateendpoint1_properties_privateLinkResourceId": {
 			"type": "string",
@@ -66,6 +78,12 @@
 					"factoryName": {
 						"value": "[parameters('factoryName')]"
 					},
+					"AzureBlobStorage1_connectionString": {
+						"value": "[parameters('AzureBlobStorage1_connectionString')]"
+					},
+					"AzureBlobStorage2_connectionString": {
+						"value": "[parameters('AzureBlobStorage2_connectionString')]"
+					},
 					"azurebloblink_connectionString": {
 						"value": "[parameters('azurebloblink_connectionString')]"
 					},
@@ -74,6 +92,9 @@
 					},
 					"linktoblobstorage_connectionString": {
 						"value": "[parameters('linktoblobstorage_connectionString')]"
+					},
+					"linktoazureblobstoragewithmultiplefiles_connectionString": {
+						"value": "[parameters('linktoazureblobstoragewithmultiplefiles_connectionString')]"
 					},
 					"privateendpointenabled_connectionString": {
 						"value": "[parameters('privateendpointenabled_connectionString')]"
@@ -93,6 +114,26 @@
 				}
 			},
 			"dependsOn": []
+		},
+		{
+			"name": "techbrotherstutorial_ArmTemplate_1",
+			"type": "Microsoft.Resources/deployments",
+			"apiVersion": "2018-02-01",
+			"properties": {
+				"mode": "incremental",
+				"templateLink": {
+					"uri": "[concat(parameters('containerUri'), '/ArmTemplate_1.json', parameters('containerSasToken'))]",
+					"contentVersion": "1.0.0.0"
+				},
+				"parameters": {
+					"factoryName": {
+						"value": "[parameters('factoryName')]"
+					}
+				}
+			},
+			"dependsOn": [
+				"[resourceId('Microsoft.Resources/deployments', 'techbrotherstutorial_ArmTemplate_0')]"
+			]
 		}
 	]
 }

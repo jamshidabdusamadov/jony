@@ -5,6 +5,12 @@
 		"factoryName": {
 			"value": "techbrotherstutorial"
 		},
+		"AzureBlobStorage1_connectionString": {
+			"value": ""
+		},
+		"AzureBlobStorage2_connectionString": {
+			"value": ""
+		},
 		"azurebloblink_connectionString": {
 			"value": ""
 		},
@@ -15,6 +21,9 @@
 			"value": ""
 		},
 		"privateendpointenabled_connectionString": {
+			"value": ""
+		},
+		"linktoazureblobstoragewithmultiplefiles_connectionString": {
 			"value": ""
 		},
 		"privateendpoint1_properties_privateLinkResourceId": {
